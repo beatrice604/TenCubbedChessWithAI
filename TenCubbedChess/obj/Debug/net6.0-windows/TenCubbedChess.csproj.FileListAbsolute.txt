@@ -19,3 +19,4 @@ D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\obj\Debug\net6.0-window
 D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\obj\Debug\net6.0-windows\TenCubbedChess.pdb
 D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\obj\Debug\net6.0-windows\TenCubbedChess.genruntimeconfig.cache
 D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\obj\Debug\net6.0-windows\ref\TenCubbedChess.dll
+D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\obj\Debug\net6.0-windows\App.baml
