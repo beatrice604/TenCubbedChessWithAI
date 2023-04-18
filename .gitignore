@@ -9,3 +9,12 @@ TenCubbedChess/obj/Debug/net6.0-windows/App.g.i.cs
 TenCubbedChess/obj/Debug/net6.0-windows/MainWindow.g.i.cs
 TenCubbedChess/obj/Debug/net6.0-windows/TenCubbedChess_MarkupCompile.i.lref
 *.cache
+TenCubbedChess/obj/TenCubbedChess.csproj.nuget.dgspec.json
+TenCubbedChess/obj/Debug/net6.0-windows/TenCubbedChess.designer.runtimeconfig.json
+TenCubbedChess/obj/Debug/net6.0-windows/TenCubbedChess.GeneratedMSBuildEditorConfig.editorconfig
+TenCubbedChess/obj/Debug/net6.0-windows/TenCubbedChess_MarkupCompile.i.cache
+TenCubbedChess/obj/Debug/net6.0-windows/TenCubbedChess_MarkupCompile.i.lref
+TenCubbedChess/obj/project.assets.json
+TenCubbedChess/obj/project.nuget.cache
+TenCubbedChess/obj/TenCubbedChess.csproj.nuget.dgspec.json
+TenCubbedChess/obj/TenCubbedChess.csproj.nuget.g.props
