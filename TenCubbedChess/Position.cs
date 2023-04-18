@@ -16,5 +16,6 @@ namespace TenCubbedChess
             this.row =row ;
             this.column = column;
         }
+        public void SetPosition(int row, int column) { this.row = row ; this.column = column ; }
     }
 }

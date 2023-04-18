@@ -20,11 +20,11 @@ namespace TenCubbedChess
     /// </summary>
     public partial class MainWindow : Window
     {
-        Board board;
+        Game game;
         public MainWindow()
         {
             InitializeComponent();
-            board= new Board();
+            game= new Game();
             Grid[,] UIGrid = new Grid[10,10];
             Dictionary<int,string> pieces= new Dictionary<int,string>();
             pieces.Add(0, "Pawn");
@@ -44,7 +44,7 @@ namespace TenCubbedChess
             {
                 for(int col=0;col<10;col++)
                 {
-                    int squareValue = board.board[row,col]; 
+                    int squareValue = game.board[row,col]; 
                     Grid grid = new Grid();
                     grid.SetValue(Grid.RowProperty, row);
                     grid.SetValue(Grid.ColumnProperty, col);
