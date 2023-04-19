@@ -8,7 +8,7 @@
         Title="StartWindow" Height="564" Width="564" WindowStartupLocation="CenterScreen">
     
     <Window.Background>
-        <ImageBrush ImageSource="D:\Anul 3\Sem 2\AI Proiect\TenCubbedChess\TenCubbedChess\Resources\chess2.jpg"/>
+        <ImageBrush ImageSource="../Resources/chess2.jpg"/>
     </Window.Background>
 
     <Window.Resources>

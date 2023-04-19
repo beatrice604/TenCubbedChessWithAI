@@ -26,7 +26,6 @@ namespace TenCubbedChess
     //7-Wizard
     //8-Marshall
     //9-Archbishop
-    //    TenCubed Chess uses ten different piece-types on a 10x10 game.The Queen combines the moves of rook and bishop. The Marshall combines the moves of rook and knight.The Archbishop combines the moves of bishop and knight.The Champion combines the moves of dabbabah and alfil and wazir.The Wizard combines the moves of camel and ferz.
     class Game
     {
         int[,] _board;
@@ -34,9 +33,13 @@ namespace TenCubbedChess
         List<Piece> _darkPieces;
         Dictionary<int, List<Piece>> _pieces = new Dictionary<int, List<Piece>> { { 1, new List<Piece>() }, { 2, new List<Piece>() } };
         Position selectedLocation;
+        bool check;
+        bool checkMate;
         //TODO:
         //1.Id is not unique
         //2.Check
+        //2.1 Verific sah
+        //2.2 filtreaza dupa sah mutarile
         //3.CheckMate
         //4.Castling
         //5.Promotion
@@ -60,6 +63,8 @@ namespace TenCubbedChess
                                        {0 , 28, 22,23,25, 24, 23, 22, 28,0},
                                        {0,  0, 26, 27, 29, 28, 27, 26,0, 0}
             };
+            check = false;
+            checkMate = false;
             selectedLocation= new Position(-1,-1);
             PieceFactory pieceFactory = new PieceFactory();
 
@@ -80,15 +85,44 @@ namespace TenCubbedChess
           
 ;        }
 
-        public void Move(int row, int column)
+        public void Move(int row, int column )
         {
+            if (selectedLocation.row == -1 && selectedLocation.column == -1)
+                throw new Exception("Missing piece to be moved");
 
-            if (board[row, column] != 0)
-            {
-               Piece piece= GetPieceByLocation(row,column);
-                piece.Move(row, column);    
-            }
+            Piece piece= GetPieceByLocation(selectedLocation.row,selectedLocation.column);
+            piece.Move(row, column);
+              check= this.setCheck(piece.Id / 10);
+            selectedLocation.SetPosition(-1, -1);
         }
+
+        public bool setCheck(int player)
+        {//verific daca regele e in sah
+            HashSet<Position> attackedSquares = new HashSet<Position>();
+            foreach(Piece piece in _pieces[player%2+1])
+            {
+                piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
+            }
+            var king = GetPieceById(player * 10 + 4);
+            foreach (Position position in attackedSquares)
+                if (king.position == position)
+                    return true;
+            return false;
+        }
+/*        public bool isCheckMate(int player)
+        {//verific daca regele e in sah mat
+            HashSet<Position> attackedSquares = new HashSet<Position>();
+            foreach (Piece piece in _pieces[(player + 1) % 2])
+            {
+                piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
+            }
+            var king = GetPieceById(player * 10 + 4);
+            foreach (Position position in attackedSquares)
+                if (king.position == position)
+                    return true;
+            return false;
+        }*/
+
 
         private Piece GetPieceByLocation(int row,int column)
         {
@@ -101,5 +135,18 @@ namespace TenCubbedChess
             return piece;
 
         }
+
+        private Piece GetPieceById(int Id)
+        {
+            Piece? piece = _pieces[Id / 10].Find(p =>
+            {
+                return p.Id == Id;
+            });
+            if (piece == null)
+                throw new Exception("This piece does not exist.");
+            return piece;
+
+        }
+
     }
 }
