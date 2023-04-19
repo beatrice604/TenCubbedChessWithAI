@@ -51,7 +51,15 @@ namespace TenCubbedChess
             game = new Game();
             DisplayBoard(game.board);
         }
-
+        private void Grid_Click(object sender, MouseButtonEventArgs e, int row, int col)
+        {
+            // Call the DisplayMoves method with the row and column of the clicked grid
+            DisplayMoves(row, col);
+        }
+        public void DisplayMoves(int row, int col)
+        {
+            List<Position> validMoves = game.ValidMoves(row, col);
+        }
         public void DisplayBoard(int[,] board)
         {
             Grid[,] UIGrid = new Grid[10, 10];
@@ -81,6 +89,9 @@ namespace TenCubbedChess
                         grid.Children.Add(path);
                     }
                     UIGrid[row, col] = grid;
+                    int currentRow = row;
+                    int currentCol = col;
+                    grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol);
                     MainGrid.Children.Add(grid);
                 }
             }
