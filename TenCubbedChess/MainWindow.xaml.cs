@@ -22,6 +22,7 @@ namespace TenCubbedChess
     {
 
         Game game;
+        Grid[,] UIGrid = new Grid[10, 10];
         private Dictionary<int,string> _pieces= new Dictionary<int, string>() {
                 {0,"Pawn"},
                 {1, "Rook"},
@@ -53,16 +54,27 @@ namespace TenCubbedChess
         }
         private void Grid_Click(object sender, MouseButtonEventArgs e, int row, int col)
         {
-            // Call the DisplayMoves method with the row and column of the clicked grid
             DisplayMoves(row, col);
         }
         public void DisplayMoves(int row, int col)
         {
             List<Position> validMoves = game.ValidMoves(row, col);
+            foreach(Position move in validMoves) 
+            {
+                int moveRow = move.row;
+                int moveCol = move.column;
+                UIGrid[moveRow, moveCol].Background = Brushes.Green;
+                //Border myBorder = new Border();
+                //myBorder.BorderBrush = Brushes.Pink;
+                //myBorder.BorderThickness = new Thickness(1);
+                //Grid.SetRow(myBorder, moveRow);
+                //Grid.SetColumn(myBorder, moveCol);
+                //MainGrid.Children.Add(myBorder);
+            }
         }
         public void DisplayBoard(int[,] board)
         {
-            Grid[,] UIGrid = new Grid[10, 10];
+            //Grid[,] UIGrid = new Grid[10, 10];
 
             for (int row = 0; row < 10; row++)
             {
@@ -73,7 +85,7 @@ namespace TenCubbedChess
                     Grid grid = new Grid();
                     grid.SetValue(Grid.RowProperty, row);
                     grid.SetValue(Grid.ColumnProperty, col);
-
+                    
                     if ((row + col) % 2 == 0)
                     {
                         grid.Background = (Brush)FindResource("EvenTile");
@@ -88,6 +100,10 @@ namespace TenCubbedChess
                         path.Style = (Style)FindResource(_pieces[squareValue % 10] + _colors[squareValue / 10]);
                         grid.Children.Add(path);
                     }
+                    Border gridBorder= new Border();
+                    gridBorder.BorderBrush = Brushes.Black;
+                    gridBorder.BorderThickness = new Thickness(1);
+                    grid.Children.Add(gridBorder);
                     UIGrid[row, col] = grid;
                     int currentRow = row;
                     int currentCol = col;
