@@ -89,7 +89,7 @@ namespace TenCubbedChess
         {
             if (selectedLocation.row == -1 && selectedLocation.column == -1)
                 throw new Exception("Missing piece to be moved");
-
+            Console.WriteLine(selectedLocation.row);
             Piece piece= GetPieceByLocation(selectedLocation.row,selectedLocation.column);
             piece.Move(row, column);
               check= this.setCheck(piece.Id / 10);

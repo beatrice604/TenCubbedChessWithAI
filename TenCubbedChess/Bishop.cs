@@ -41,7 +41,7 @@ namespace TenCubbedChess
                     moves.Add(new Position(i, size - i - 1));
                 else { break; }
             }
-            for(int i = this.position.row;i>0;i--)
+            for(int i = this.position.row;i>=0;i--)
             {
                 if (board[i, i] == 0)
                     moves.Add(new Position(i, i));
@@ -50,7 +50,7 @@ namespace TenCubbedChess
                 else { break; }
             }
 
-            for (int i = this.position.row; i > 0; i--)
+            for (int i = this.position.row; i >= 0; i--)
             {
                 if (board[i, size - i - 1] == 0)
                     moves.Add(new Position(i, size - i - 1));

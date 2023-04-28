@@ -70,7 +70,7 @@ namespace TenCubbedChess
                 else { break; }
 
             }
-            for (int j = this.position.column - 1; j>0; j--)
+            for (int j = this.position.column - 1; j>=0; j--)
             {
                 if (board[this.position.row, j] == 0)
                 {

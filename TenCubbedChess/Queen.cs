@@ -21,10 +21,12 @@ namespace TenCubbedChess
         }
 
         public override List<Position> LegalMoves(int[,] board)
-        {   
+        {   List<Position> moves = new List<Position>();
+            
             Bishop bishop = new Bishop(this.position.row, this.position.column, Id / 10 == 1);
             Rook rook = new Rook(this.position.row, this.position.column, Id / 10 == 1);
-            List<Position> moves = new List<Position>(bishop.LegalMoves(board));
+
+            moves.AddRange(bishop.LegalMoves(board));
             moves.AddRange(rook.LegalMoves(board));
 
             return moves;
