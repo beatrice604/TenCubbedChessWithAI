@@ -46,7 +46,7 @@ namespace TenCubbedChess
                 if (!IsOutOfBounds(position.row + offset.row, position.column + offset.column))
                 {
                     if (board[position.row + offset.row, position.column + offset.column] == 0 || board[position.row + offset.row, position.column + offset.column] / 10 != Id / 10)
-                        moves.Add(offset);
+                        moves.Add(new Position(position.row + offset.row, position.column + offset.column));
                 }
             }
             return moves;

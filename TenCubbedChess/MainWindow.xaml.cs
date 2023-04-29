@@ -23,7 +23,7 @@ namespace TenCubbedChess
 
         Game game;
         Grid[,] UIGrid = new Grid[10, 10];
-        private Dictionary<int,string> _pieces= new Dictionary<int, string>() {
+        private Dictionary<int, string> _pieces = new Dictionary<int, string>() {
                 {0,"Pawn"},
                 {1, "Rook"},
                 {2, "Knight"},
@@ -42,7 +42,7 @@ namespace TenCubbedChess
         public MainWindow(int gameType)
         {
             InitializeComponent();
-            game= new Game();
+            game = new Game();
             DisplayBoard(game.board);
         }
 
@@ -54,12 +54,41 @@ namespace TenCubbedChess
         }
         private void Grid_Click(object sender, MouseButtonEventArgs e, int row, int col)
         {
-            DisplayMoves(row, col);
+            #region old
+            //bool movedPiece = false;
+            //if (game.board[row, col] == 0 && UIGrid[row,col].Background!=Brushes.Green && anyValidMovesDisplayed()) return;
+
+            //if (UIGrid[row,col].Background==Brushes.Green)
+            //{
+            //    game.Move(row, col);
+            //    movedPiece = true;
+
+            //} 
+            //DisplayBoard(game.board);
+            //if (movedPiece==false)
+            //{
+            //    DisplayMoves(row, col);
+            //}
+            #endregion
+            if (UIGrid[row, col].Background == Brushes.Green)
+            {
+                game.Move(row, col);
+                DisplayBoard(game.board);
+            }
+            else
+            {
+                if (game.board[row, col] != 0)
+                {
+                    DisplayBoard(game.board);
+                    DisplayMoves(row, col);
+                }
+            }
         }
+
         public void DisplayMoves(int row, int col)
         {
             List<Position> validMoves = game.ValidMoves(row, col);
-            foreach(Position move in validMoves) 
+            foreach (Position move in validMoves)
             {
                 int moveRow = move.row;
                 int moveCol = move.column;
@@ -80,12 +109,12 @@ namespace TenCubbedChess
             {
                 for (int col = 0; col < 10; col++)
                 {
-                    int squareValue = game.board[row,col]; 
+                    int squareValue = game.board[row, col];
 
                     Grid grid = new Grid();
                     grid.SetValue(Grid.RowProperty, row);
                     grid.SetValue(Grid.ColumnProperty, col);
-                    
+
                     if ((row + col) % 2 == 0)
                     {
                         grid.Background = (Brush)FindResource("EvenTile");
@@ -100,7 +129,7 @@ namespace TenCubbedChess
                         path.Style = (Style)FindResource(_pieces[squareValue % 10] + _colors[squareValue / 10]);
                         grid.Children.Add(path);
                     }
-                    Border gridBorder= new Border();
+                    Border gridBorder = new Border();
                     gridBorder.BorderBrush = Brushes.Black;
                     gridBorder.BorderThickness = new Thickness(1);
                     grid.Children.Add(gridBorder);
