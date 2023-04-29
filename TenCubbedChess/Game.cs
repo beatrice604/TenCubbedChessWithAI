@@ -56,7 +56,7 @@ namespace TenCubbedChess
                                        {0 , 18, 12,13,15, 14, 13, 12, 18,0},
                                        {10, 10,10,10, 10, 10, 10, 10, 10,10},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
-                                       {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
+                                       {0,  0, 0, 0,  26,  0,  0,  0,  0, 0},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
                                        {20, 20,20,20, 20, 20, 20, 20, 20,20},
@@ -80,7 +80,8 @@ namespace TenCubbedChess
         public List<Position> ValidMoves(int row, int column)
         {
             Piece piece = GetPieceByLocation(row,column);
-            selectedLocation = piece.position;
+            //selectedLocation = piece.position;
+            selectedLocation.SetPosition(piece.position.row,piece.position.column);
             return piece.LegalMoves(board);
           
 ;        }
@@ -91,8 +92,12 @@ namespace TenCubbedChess
                 throw new Exception("Missing piece to be moved");
             Console.WriteLine(selectedLocation.row);
             Piece piece= GetPieceByLocation(selectedLocation.row,selectedLocation.column);
+            
+            
+           _board[selectedLocation.row, selectedLocation.column] = 0;
+            board[row, column] = piece.Id;
             piece.Move(row, column);
-              check= this.setCheck(piece.Id / 10);
+            check = this.setCheck(piece.Id / 10);
             selectedLocation.SetPosition(-1, -1);
         }
 
