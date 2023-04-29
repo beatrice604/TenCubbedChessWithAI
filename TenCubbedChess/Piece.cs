@@ -24,6 +24,18 @@ namespace TenCubbedChess
             if(column < 0 || column >= 10)return true;
             return false;
         }
+        protected void MoveWhileTrue(int rowOffset, int columnOffset, ref bool condition, ref List<Position> moves, int[,] board)
+        {
+            Position nextPosition = new Position(this.position.row + rowOffset, this.position.column + columnOffset);
+            if (IsOutOfBounds(nextPosition.row, nextPosition.column) || board[nextPosition.row, nextPosition.column] / 10 == Id / 10)
+                condition = false;
+            else
+            {
+                moves.Add(new Position(nextPosition));
+                if (board[nextPosition.row, nextPosition.column] != 0 && board[nextPosition.row, nextPosition.column] / 10 != Id / 10)
+                    condition = false;
+            }
+        }
 
     }
 }

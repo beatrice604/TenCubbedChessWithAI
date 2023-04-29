@@ -24,67 +24,24 @@ namespace TenCubbedChess
         public override List<Position> LegalMoves(int[,] board)
         {
             List<Position> moves = new List<Position>();
-            for (int i = this.position.row+1; i < 10; i++)
+
+
+            bool top = true, right= true, bottom= true, left= true;
+            int offset = 1;
+
+            while (top || right || bottom || left)
             {
+                if (top) MoveWhileTrue((-1) * offset,0, ref top, ref moves, board);
+                if (right) MoveWhileTrue(0, offset, ref right, ref moves, board);
+                if (bottom) MoveWhileTrue(offset, 0, ref bottom, ref moves, board);
+                if (left) MoveWhileTrue(0, (-1)*offset, ref left, ref moves, board);
 
-                if (board[i,this.position.column]==0)
-                { 
-                    moves.Add(new Position(i,this.position.column)); 
-                }
-                else
-                if (board[i, this.position.column]/10 != Id/10 && board[i-1, this.position.column] / 10 == 0)
-                {
-                    moves.Add(new Position(i, this.position.column));
-                }
-                else { break; }
-               
-            }
-            for (int i = this.position.row - 1; i > 0; i--)
-            {
-
-                if (board[i, this.position.column] == 0)
-                {
-                    moves.Add(new Position(i, this.position.column));
-                }
-                else
-                if (board[i, this.position.column] / 10 != Id / 10 && board[i + 1, this.position.column] / 10 == 0)
-                {
-                    moves.Add(new Position(i, this.position.column));
-                }
-                else { break; }
-
-            }
-            
-            for (int j = this.position.column + 1; j < 10; j++)
-            {
-
-                if (board[this.position.row, j] == 0)
-                {
-                    moves.Add(new Position(this.position.row, j));
-                }
-                else
-                if (board[this.position.row,j] / 10 != Id / 10 && board[this.position.row, j-1] / 10 == 0)
-                {
-                    moves.Add(new Position(this.position.row, j));
-                }
-                else { break; }
-
-            }
-            for (int j = this.position.column - 1; j>=0; j--)
-            {
-                if (board[this.position.row, j] == 0)
-                {
-                    moves.Add(new Position(this.position.row, j));
-                }
-                else if (board[this.position.row, j] / 10 != Id / 10 && board[this.position.row, j + 1] / 10 == 0)
-                {
-                    moves.Add(new Position(this.position.row, j));
-                }
-                else { break; }
+                offset++;
 
             }
 
             return moves;
         }
+
     }
 }
