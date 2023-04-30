@@ -50,19 +50,21 @@ namespace TenCubbedChess
          { get { return _board; }
             set { _board = value; } 
           }
+        public int round;
         public Game()
         {
             _board = new int[10, 10] { {0, 0, 16, 17, 19, 18, 17, 16,0,0},
-                                       {0 , 18, 12,13,15, 14, 13, 12, 18,0},
+                                       {0 , 11, 12,13,15, 14, 13, 12, 11,0},
                                        {10, 10,10,10, 10, 10, 10, 10, 10,10},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
-                                       {0,  0, 0, 0,  26,  0,  0,  0,  0, 0},
+                                       {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
                                        {0,  0, 0, 0,  0,  0,  0,  0,  0, 0},
                                        {20, 20,20,20, 20, 20, 20, 20, 20,20},
-                                       {0 , 28, 22,23,25, 24, 23, 22, 28,0},
+                                       {0 , 21, 22,23,25, 24, 23, 22, 21,0},
                                        {0,  0, 26, 27, 29, 28, 27, 26,0, 0}
             };
+            round = 1;
             check = false;
             checkMate = false;
             selectedLocation= new Position(-1,-1);
@@ -97,21 +99,21 @@ namespace TenCubbedChess
            _board[selectedLocation.row, selectedLocation.column] = 0;
             board[row, column] = piece.Id;
             piece.Move(row, column);
-            check = this.setCheck(piece.Id / 10);
+            check = this.setCheck((piece.Id / 10 )%2 + 1);
             selectedLocation.SetPosition(-1, -1);
         }
 
         public bool setCheck(int player)
         {//verific daca regele e in sah
-            HashSet<Position> attackedSquares = new HashSet<Position>();
+            List<Position> attackedSquares = new List<Position>();
             foreach(Piece piece in _pieces[player%2+1])
             {
                 piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
             }
             var king = GetPieceById(player * 10 + 4);
-            foreach (Position position in attackedSquares)
-                if (king.position == position)
-                    return true;
+            if (attackedSquares.Exists(sq => sq.Equals(king.position)))
+                return true;
+
             return false;
         }
 /*        public bool isCheckMate(int player)

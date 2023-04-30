@@ -37,7 +37,7 @@ namespace TenCubbedChess
             foreach(Position offset in offsets)
             {
                  if (!this.IsOutOfBounds(position.row + offset.row, position.column + offset.column) &&
-                        (board[position.row + offset.row, position.column + offset.row] == 0 || board[position.row + offset.row, position.column] / 10 != Id / 10))
+                        (IsEmpty(board[position.row + offset.row, position.column + offset.column]) || IsEnemy(board[position.row + offset.row, position.column+offset.column])))
                         moves.Add(new Position(position.row + offset.row, position.column + offset.column));
                    
                         }

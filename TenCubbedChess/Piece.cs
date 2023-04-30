@@ -37,5 +37,18 @@ namespace TenCubbedChess
             }
         }
 
+        protected bool IsEnemy(int value)
+        {
+            if(Id / 10 != value/10 && value!=0)
+            return true;
+            return false;
+        }
+
+        protected bool IsEmpty(int value)
+        {
+            if (value == 0)
+                return true;
+            return false;
+        }
     }
 }

@@ -38,8 +38,13 @@ namespace TenCubbedChess
                 direction = 1;
             foreach (Position offset in offsets) {
                 Position nextMove = new Position(this.position.row + direction * offset.row, this.position.column + direction * offset.column);
-                if (!IsOutOfBounds(nextMove.row,nextMove.column))
-                    if (Board[nextMove.row,nextMove.column] == 0 || Board[nextMove.row, nextMove.column] / 10 != Id / 10)
+                if (!IsOutOfBounds(nextMove.row, nextMove.column))
+                    if (offset.column == 0)
+                    {
+                        if (IsEmpty(Board[nextMove.row, nextMove.column]))
+                            moves.Add(nextMove);
+                    }
+                    else if (IsEnemy(Board[nextMove.row, nextMove.column]))
                         moves.Add(nextMove);
             }
             if (this.position.row == 2 && direction > 0)
@@ -47,13 +52,14 @@ namespace TenCubbedChess
             if (this.position.row == 7 && direction < 0)
                 moves.Add(new Position(position.row - 2, position.column));
 
-/*                //enPassant
-                if (this.position.column - 1 >= 0 && Board[this.position.row, this.position.column - 1] / 10 != this.Id / 10)
-                    moves.Add(new Position(this.position.row+direction, this.position.column-1));
-                if (this.position.column + 1 < 10 && Board[this.position.row, this.position.column - 1] / 10 != this.Id / 10)
-                    moves.Add(new Position(this.position.row+direction, this.position.column+1));*/
+            //enPassant -> nu ia bine piesa, treubie caz separat tratat pt pion in game 
             
-           
+            if (!IsOutOfBounds(this.position.row, this.position.column - 1) && IsEnemy(Board[this.position.row, this.position.column - 1]))
+                moves.Add(new Position(this.position.row + direction, this.position.column - 1));
+            if (!IsOutOfBounds(this.position.row, this.position.column + 1) && IsEnemy(Board[this.position.row, this.position.column + 1]))
+                moves.Add(new Position(this.position.row + direction, this.position.column + 1));
+
+
             return moves;
         }
     }

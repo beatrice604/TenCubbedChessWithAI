@@ -49,7 +49,7 @@ namespace TenCubbedChess
             {
                 if (!IsOutOfBounds(position.row + offset.row, position.column + offset.column))
                 {
-                    if (board[position.row + offset.row, position.column + offset.column] == 0 || board[position.row + offset.row, position.column + offset.column] / 10 != Id / 10)
+                    if (IsEmpty(board[position.row + offset.row, position.column + offset.column]) || IsEnemy(board[position.row + offset.row, position.column + offset.column]))
                         moves.Add(new Position(position.row+offset.row, position.column+offset.column));
                 }
             }
