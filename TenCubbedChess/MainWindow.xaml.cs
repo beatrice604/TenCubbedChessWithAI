@@ -12,6 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net.Sockets;
+using System.Net;
+using System.Threading;
+using System.Windows.Markup;
+using System.Security.Cryptography;
 
 namespace TenCubbedChess
 {
@@ -23,6 +28,12 @@ namespace TenCubbedChess
 
         Game game;
         Grid[,] UIGrid = new Grid[10, 10];
+        TcpListener server;
+        TcpClient client;
+        NetworkStream stream;
+        int oldRow, oldCol;
+        bool turn = true;
+
         private Dictionary<int, string> _pieces = new Dictionary<int, string>() {
                 {0,"Pawn"},
                 {1, "Rook"},
@@ -39,11 +50,115 @@ namespace TenCubbedChess
                 {1, "Dark" },
                 {2, "Light" }
             };
+        private void createServer()
+        {
+            server = null;
+
+            try
+            {
+                Int32 port = 50516;
+                IPAddress localHost = IPAddress.Parse("127.0.0.1");
+
+                server = new TcpListener(localHost, port);
+
+                server.Start();
+
+
+
+                while (true)
+                {
+                    Console.WriteLine("Waiting for a connection... ");
+
+                    client = server.AcceptTcpClient();
+                    stream = client.GetStream();
+                    break;
+                    //MessageBox.Show("Connected!");
+
+
+                }
+
+            }
+            catch (SocketException e)
+            {
+                Console.WriteLine("SocketException: {0}", e);
+            }
+
+            //Console.WriteLine("\n Hit enter to continue...");
+            //Console.Read();
+        }
+        private void createClient(String server, String message)
+        {
+            try
+            {
+                Int32 port = 50516;
+
+                client = new TcpClient(server, port);
+                stream = client.GetStream();
+
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine("ArgumentNullException: {0}", e);
+
+            }
+            catch (SocketException se)
+            {
+                Console.WriteLine("SocketException: {0}", se);
+            }
+
+            //Console.WriteLine("\n Press Enter to continue...");
+            //Console.Read();
+        }
         public MainWindow(int gameType)
         {
             InitializeComponent();
             game = new Game();
+            IPAddress localHost = IPAddress.Parse("127.0.0.1");
+            Int32 port = 5000;
+            switch (gameType)
+            {
+                case 0:
+                    break;
+                case 1:
+                    {
+                        createServer();
+                    }
+                    break;
+                case 2:
+                    {
+                        createClient("127.0.0.1", "Hello Beea");
+                    }
+                    break;
+            }
             DisplayBoard(game.board);
+            if(gameType==2)
+            {
+                Listen();
+            }
+        }
+
+        public void Listen()
+        {
+            Byte[] bytes = new Byte[256];
+            String responseData = String.Empty;
+            
+
+            while (true)
+            {
+                Int32 data = stream.Read(bytes, 0, bytes.Length);
+                if (data != 0)
+                {
+                    responseData = System.Text.Encoding.ASCII.GetString(bytes, 0, data);
+                    break;
+                }
+
+            }
+            string[] parsedMessage = responseData.Split(";");
+            string[] newPos = parsedMessage[1].Split(",");
+            string[] oldPos = parsedMessage[0].Split(",");
+            game.Move(Convert.ToInt32(newPos[0]), Convert.ToInt32(newPos[1]), Convert.ToInt32(oldPos[0]), Convert.ToInt32(oldPos[1]));
+            DisplayBoard(game.board);
+
         }
 
         public MainWindow()
@@ -51,6 +166,23 @@ namespace TenCubbedChess
             InitializeComponent();
             game = new Game();
             DisplayBoard(game.board);
+
+        }
+
+        public void SendData(int oldRow, int oldCol, int newRow, int newCol)
+        {
+            string message = String.Format("{0},{1};{2},{3}", oldRow, oldCol, newRow, newCol);
+
+
+            Byte[] bytes = new Byte[256];
+
+            stream = client.GetStream();
+
+            string serverMessage = message;
+            byte[] initialMessageBytes = Encoding.ASCII.GetBytes(serverMessage);
+            stream.Write(initialMessageBytes, 0, initialMessageBytes.Length);
+           
+           
         }
         private void Grid_Click(object sender, MouseButtonEventArgs e, int row, int col)
         {
@@ -72,8 +204,10 @@ namespace TenCubbedChess
             #endregion
             if (UIGrid[row, col].Background == Brushes.Green)
             {
-                game.Move(row, col);
+                game.Move(row, col,oldRow,oldCol);
                 DisplayBoard(game.board);
+                SendData(oldRow, oldCol, row, col);
+                Listen();
             }
             else
             {
@@ -81,6 +215,8 @@ namespace TenCubbedChess
                 {
                     DisplayBoard(game.board);
                     DisplayMoves(row, col);
+                    oldRow = row;
+                    oldCol = col;
                 }
             }
         }
@@ -137,6 +273,7 @@ namespace TenCubbedChess
                     int currentRow = row;
                     int currentCol = col;
                     grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol);
+                    //sendData(sender.row,sender.col,row, col);
                     MainGrid.Children.Add(grid);
                 }
             }

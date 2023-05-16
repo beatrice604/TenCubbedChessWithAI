@@ -70,13 +70,13 @@ namespace TenCubbedChess
             check = false;
             checkMate = false;
             selectedLocation = new Position(-1, -1);
+
             pieceFactory = new PieceFactory();
 
             for (int i = 0; i < 10; i++)
                 for (int j = 0; j < 10; j++)
                     if (board[i, j] != 0)
                         _pieces[board[i, j] / 10].Add(pieceFactory.createPiece(i, j, board[i, j]));
-
 
         }
 
@@ -109,6 +109,7 @@ namespace TenCubbedChess
 
                 return filteredLegalMoves;
             
+
         }
 
         public void Move(int row, int column, int oldRow=-1, int oldCol=-1)
@@ -143,8 +144,6 @@ namespace TenCubbedChess
 
             return false;
         }
-
-
 
         private Piece GetPieceByLocation(int row, int column)
         {

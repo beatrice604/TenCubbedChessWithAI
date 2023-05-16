@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net.Sockets;
+using System.Net;
 
 namespace TenCubbedChess
 {
@@ -22,29 +24,34 @@ namespace TenCubbedChess
         public ServerClientWindow()
         {
             InitializeComponent();
+
         }
+
 
 
         private void btnServerClient(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            int gameType=0;
-            switch(btn!.Name)
+            int gameType = 0;
+            switch (btn!.Name)
             {
                 case "btnServer":
-                    gameType = 1;
+                    {
+                        MainWindow mainWindowServer = new MainWindow(1);
+                        mainWindowServer.Show();
+                        this.Close();
+                    }
                     break;
                 case "btnClient":
-                    gameType = 2;
+                    {
+                        MainWindow mainWindowClient = new MainWindow(2);
+                        mainWindowClient.Show();
+                        this.Close();
+                    }
                     break;
                 default:
                     break;
-            }
-            if (gameType!=0)
-            {
-                MainWindow mainWindow = new MainWindow(gameType);
-                mainWindow.Show();
-                this.Close();
+
             }
         }
     }
