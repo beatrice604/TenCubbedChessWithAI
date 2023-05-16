@@ -6,7 +6,7 @@ namespace TenCubbedChess
     {
         public Position position;
         public  int Id { get; set; }
-
+        public int points;
         public Piece(int row,int column, bool whitePiece)
         {
             position = new Position(row,column);

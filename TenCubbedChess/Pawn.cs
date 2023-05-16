@@ -20,6 +20,7 @@ namespace TenCubbedChess
             {
                 Id = 20;
             }
+            points = 1;
         }
 
 
@@ -47,9 +48,9 @@ namespace TenCubbedChess
                     else if (IsEnemy(Board[nextMove.row, nextMove.column]))
                         moves.Add(nextMove);
             }
-            if (this.position.row == 2 && direction > 0)
+            if (this.position.row == 2 && direction > 0 && IsEmpty(Board[position.row + 2, position.column]))
                 moves.Add(new Position(position.row + 2, position.column));
-            if (this.position.row == 7 && direction < 0)
+            if (this.position.row == 7 && direction < 0 && IsEmpty(Board[position.row - 2, position.column]))
                 moves.Add(new Position(position.row - 2, position.column));
 
             //enPassant -> nu ia bine piesa, treubie caz separat tratat pt pion in game 

@@ -18,6 +18,7 @@ namespace TenCubbedChess
             {
                 Id = 26;
             }
+            points = 7;
         }
 
         public override List<Position> LegalMoves(int[,] board)
@@ -50,14 +51,14 @@ namespace TenCubbedChess
                 if (!IsOutOfBounds(position.row + offset.row, position.column + offset.column))
                 {
                     if (IsEmpty(board[position.row + offset.row, position.column + offset.column]) || IsEnemy(board[position.row + offset.row, position.column + offset.column]))
-                        moves.Add(new Position(position.row+offset.row, position.column+offset.column));
+                        moves.Add(new Position(position.row + offset.row, position.column + offset.column));
                 }
             }
 
             return moves;
         }
 
-       
+
 
     }
 }

@@ -19,6 +19,7 @@ namespace TenCubbedChess
             {
                 Id = 21;
             }
+            points = 5;
         }
 
         public override List<Position> LegalMoves(int[,] board)
