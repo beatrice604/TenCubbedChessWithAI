@@ -47,9 +47,10 @@ namespace TenCubbedChess
 
 
         public int[,] board
-         { get { return _board; }
-            set { _board = value; } 
-          }
+        {
+            get { return _board; }
+            set { _board = value; }
+        }
         public int round;
         public Game()
         {
@@ -67,46 +68,54 @@ namespace TenCubbedChess
             round = 1;
             check = false;
             checkMate = false;
-            selectedLocation= new Position(-1,-1);
+            selectedLocation = new Position(-1, -1);
             PieceFactory pieceFactory = new PieceFactory();
 
-            for(int i = 0;i<10;i++)
-                for(int j=0;j<10;j++)
-                    if(board[i,j]!=0)
-                        _pieces[board[i, j] / 10].Add(pieceFactory.createPiece(i,j,board[i,j]));          
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
+                    if (board[i, j] != 0)
+                        _pieces[board[i, j] / 10].Add(pieceFactory.createPiece(i, j, board[i, j]));
 
-                            
+
         }
 
         //onClick
         public List<Position> ValidMoves(int row, int column)
         {
-            Piece piece = GetPieceByLocation(row,column);
+            Piece piece = GetPieceByLocation(row, column);
             //selectedLocation = piece.position;
-            selectedLocation.SetPosition(piece.position.row,piece.position.column);
+            selectedLocation.SetPosition(piece.position.row, piece.position.column);
             return piece.LegalMoves(board);
-          
-;        }
 
-        public void Move(int row, int column )
+            ;
+        }
+
+        public void Move(int row, int column, int oldRow = -1, int oldCol = -1)
         {
-            if (selectedLocation.row == -1 && selectedLocation.column == -1)
-                throw new Exception("Missing piece to be moved");
+            if (oldRow == -1 && oldCol == -1)
+            {
+                if (selectedLocation.row == -1 && selectedLocation.column == -1)
+                    throw new Exception("Missing piece to be moved");
+            }
+            else
+            {
+                selectedLocation.SetPosition(oldRow, oldCol);
+            }
             Console.WriteLine(selectedLocation.row);
-            Piece piece= GetPieceByLocation(selectedLocation.row,selectedLocation.column);
-            
-            
-           _board[selectedLocation.row, selectedLocation.column] = 0;
+            Piece piece = GetPieceByLocation(selectedLocation.row, selectedLocation.column);
+
+
+            _board[selectedLocation.row, selectedLocation.column] = 0;
             board[row, column] = piece.Id;
             piece.Move(row, column);
-            check = this.setCheck((piece.Id / 10 )%2 + 1);
+            check = this.setCheck((piece.Id / 10) % 2 + 1);
             selectedLocation.SetPosition(-1, -1);
         }
 
         public bool setCheck(int player)
         {//verific daca regele e in sah
             List<Position> attackedSquares = new List<Position>();
-            foreach(Piece piece in _pieces[player%2+1])
+            foreach (Piece piece in _pieces[player % 2 + 1])
             {
                 piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
             }
@@ -116,24 +125,24 @@ namespace TenCubbedChess
 
             return false;
         }
-/*        public bool isCheckMate(int player)
-        {//verific daca regele e in sah mat
-            HashSet<Position> attackedSquares = new HashSet<Position>();
-            foreach (Piece piece in _pieces[(player + 1) % 2])
-            {
-                piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
-            }
-            var king = GetPieceById(player * 10 + 4);
-            foreach (Position position in attackedSquares)
-                if (king.position == position)
-                    return true;
-            return false;
-        }*/
+        /*        public bool isCheckMate(int player)
+                {//verific daca regele e in sah mat
+                    HashSet<Position> attackedSquares = new HashSet<Position>();
+                    foreach (Piece piece in _pieces[(player + 1) % 2])
+                    {
+                        piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
+                    }
+                    var king = GetPieceById(player * 10 + 4);
+                    foreach (Position position in attackedSquares)
+                        if (king.position == position)
+                            return true;
+                    return false;
+                }*/
 
 
-        private Piece GetPieceByLocation(int row,int column)
+        private Piece GetPieceByLocation(int row, int column)
         {
-            Piece? piece = _pieces[board[row,column] / 10].Find(p =>
+            Piece? piece = _pieces[board[row, column] / 10].Find(p =>
             {
                 return p.position.row == row && p.position.column == column;
             });
