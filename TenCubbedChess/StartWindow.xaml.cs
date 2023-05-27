@@ -26,10 +26,12 @@ namespace TenCubbedChess
 
         private void btnAI_Click(object sender, RoutedEventArgs e)
         {
-            var gameType = 0;//0=AI
-            MainWindow mainWindow = new MainWindow(gameType);
+            //var gameType = 0;//0=AI
+            DepthForm depthForm = new DepthForm();  
+
+           // MainWindow mainWindow = new MainWindow(gameType);
             this.Close();
-            mainWindow.Show();
+            depthForm.Show();
         }
 
         private void btnHuman_Click(object sender, RoutedEventArgs e)

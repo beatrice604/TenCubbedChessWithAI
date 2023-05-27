@@ -112,7 +112,7 @@ namespace TenCubbedChess
             //Console.WriteLine("\n Press Enter to continue...");
             //Console.Read();
         }
-        public MainWindow(int gameType)
+        public MainWindow(int gameType, string depth="")
         {
             InitializeComponent();
             game = new Game();
@@ -122,7 +122,7 @@ namespace TenCubbedChess
             {
                 case 0:
                     {
-                        chessAI = new ChessAI(4);
+                        chessAI = new ChessAI(Convert.ToInt32(depth));
                         isAI = true;
                     }
                     break;
@@ -294,7 +294,7 @@ namespace TenCubbedChess
                     UIGrid[row, col] = grid;
                     int currentRow = row;
                     int currentCol = col;
-                    Dispatcher.Invoke(()=>grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol));
+                    grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol);
                     //sendData(sender.row,sender.col,row, col);
                     MainGrid.Children.Add(grid);
                 }
