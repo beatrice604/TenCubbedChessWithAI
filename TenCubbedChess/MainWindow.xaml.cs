@@ -34,6 +34,8 @@ namespace TenCubbedChess
         int oldRow, oldCol;
         bool turn = true;
         Thread thread;
+        ChessAI chessAI;
+        bool isAI=false;
 
         private Dictionary<int, string> _pieces = new Dictionary<int, string>() {
                 {0,"Pawn"},
@@ -119,6 +121,10 @@ namespace TenCubbedChess
             switch (gameType)
             {
                 case 0:
+                    {
+                        chessAI = new ChessAI(4);
+                        isAI = true;
+                    }
                     break;
                 case 1:
                     {
@@ -129,7 +135,7 @@ namespace TenCubbedChess
                     break;
                 case 2:
                     {
-                        createClient("127.0.0.1", "Hello Beea");
+                        createClient("127.0.0.1","Created Client");
                         thread = new Thread(Listen);
                         thread.Start();
                     }
@@ -206,11 +212,24 @@ namespace TenCubbedChess
             //    DisplayMoves(row, col);
             //}
             #endregion
+
             if (UIGrid[row, col].Background == Brushes.Green)
             {
                 game.Move(row, col,oldRow,oldCol);
-                DisplayBoard(game.board);
-                SendData(oldRow, oldCol, row, col);
+                Dispatcher.Invoke(()=>DisplayBoard(game.board));
+                if(!isAI)
+                { 
+                    SendData(oldRow, oldCol, row, col);
+                }
+                else
+                {   
+                    (Piece piece,Position newPosition) aiMove = chessAI.MoveAI(game.board);
+                    //change Game
+                    game.Move(aiMove.newPosition.row,aiMove.newPosition.column, aiMove.piece.position.row, aiMove.piece.position.column);
+                    //display moves
+                    DisplayBoard(game.board);
+                }
+
             }
             else
             {

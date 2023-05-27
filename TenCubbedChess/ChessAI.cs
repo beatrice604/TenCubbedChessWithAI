@@ -17,19 +17,22 @@ namespace TenCubbedChess
             pieceFactory = new PieceFactory();
         }
         public (Piece,Position) MoveAI(int[,] board)
-        { 
-            return FindBestMove(depth,board);
+        {
+            (Piece piece, Position newPosition) aiMove = FindBestMove(depth, board);
+            return aiMove;
         }
         private (Piece, Position) FindBestMove(int depth, int[,] board)
         {
             int bestEval = int.MinValue;
             (Piece piece, Position position) bestMove = (null, null);
             bool isMaximizingPlayer = true;
-            var darkPieces = GeneratePieces(board, 2);
+            var darkPieces = GeneratePieces(board, 1);
             List<(Piece piece, Position position)> pieceMoves = GetMovesOfPieces(board, darkPieces);
             foreach (var pieceMove in pieceMoves)
             {
-                int[,] newBoard = ChangeBoard(board, pieceMove.piece, pieceMove.position);
+                int[,] newBoard = new int[10, 10];
+                
+                newBoard = ChangeBoard(board, pieceMove.piece, pieceMove.position);
                 int eval = MiniMax(newBoard, depth - 1, !isMaximizingPlayer);
 
                 if (eval > bestEval)
@@ -43,9 +46,11 @@ namespace TenCubbedChess
         }
         private int[,] ChangeBoard(int[,] board, Piece piece, Position newPosition)
         {
-            board[newPosition.row, newPosition.column] = piece.Id;
-            board[piece.position.row, piece.position.column] = 0;
-            return board;
+            int[,] newBoard =new int[10, 10];
+            Array.Copy(board,newBoard,board.GetLength(0));
+            newBoard[newPosition.row, newPosition.column] = piece.Id;
+            newBoard[piece.position.row, piece.position.column] = 0;
+            return newBoard;
         }
         private int MiniMax(int[,] board, int depth, bool isMaximizingPlayer)
         {
@@ -59,7 +64,7 @@ namespace TenCubbedChess
             {
                 int maxEval = int.MinValue;
 
-                List<Piece> myPieces = GeneratePieces(board, 2);
+                List<Piece> myPieces = GeneratePieces(board, 1);
                 List<(Piece piece, Position position)> pieceMoves = GetMovesOfPieces(board, myPieces);
 
                 foreach (var pieceMove in pieceMoves)
@@ -91,7 +96,7 @@ namespace TenCubbedChess
             List<Piece> pieces = new List<Piece>();
             for (int i = 0; i < 10; i++)
                 for (int j = 0; j < 10; j++)
-                    if (board[i, j] == player)
+                    if (board[i, j] /10  == player)
                         pieces.Add(pieceFactory.createPiece(i, j, board[i, j]));
 
             return pieces;
