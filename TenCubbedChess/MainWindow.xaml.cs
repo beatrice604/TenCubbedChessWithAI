@@ -33,6 +33,7 @@ namespace TenCubbedChess
         NetworkStream stream;
         int oldRow, oldCol;
         bool turn = true;
+        Thread thread;
 
         private Dictionary<int, string> _pieces = new Dictionary<int, string>() {
                 {0,"Pawn"},
@@ -122,42 +123,45 @@ namespace TenCubbedChess
                 case 1:
                     {
                         createServer();
+                        thread = new Thread(Listen);
+                        thread.Start();
                     }
                     break;
                 case 2:
                     {
                         createClient("127.0.0.1", "Hello Beea");
+                        thread = new Thread(Listen);
+                        thread.Start();
                     }
                     break;
             }
             DisplayBoard(game.board);
-            if(gameType==2)
-            {
-                Listen();
-            }
+
         }
 
         public void Listen()
         {
             Byte[] bytes = new Byte[256];
             String responseData = String.Empty;
-            
 
             while (true)
             {
-                Int32 data = stream.Read(bytes, 0, bytes.Length);
-                if (data != 0)
+                while (true)
                 {
-                    responseData = System.Text.Encoding.ASCII.GetString(bytes, 0, data);
-                    break;
-                }
+                    Int32 data = stream.Read(bytes, 0, bytes.Length);
+                    if (data != 0)
+                    {
+                        responseData = System.Text.Encoding.ASCII.GetString(bytes, 0, data);
+                        break;
+                    }
 
+                }
+                string[] parsedMessage = responseData.Split(";");
+                string[] newPos = parsedMessage[1].Split(",");
+                string[] oldPos = parsedMessage[0].Split(",");
+                Dispatcher.Invoke(() => game.Move(Convert.ToInt32(newPos[0]), Convert.ToInt32(newPos[1]), Convert.ToInt32(oldPos[0]), Convert.ToInt32(oldPos[1])));
+                Dispatcher.Invoke(() => DisplayBoard(game.board));
             }
-            string[] parsedMessage = responseData.Split(";");
-            string[] newPos = parsedMessage[1].Split(",");
-            string[] oldPos = parsedMessage[0].Split(",");
-            game.Move(Convert.ToInt32(newPos[0]), Convert.ToInt32(newPos[1]), Convert.ToInt32(oldPos[0]), Convert.ToInt32(oldPos[1]));
-            DisplayBoard(game.board);
 
         }
 
@@ -207,7 +211,6 @@ namespace TenCubbedChess
                 game.Move(row, col,oldRow,oldCol);
                 DisplayBoard(game.board);
                 SendData(oldRow, oldCol, row, col);
-                Listen();
             }
             else
             {
@@ -272,7 +275,7 @@ namespace TenCubbedChess
                     UIGrid[row, col] = grid;
                     int currentRow = row;
                     int currentCol = col;
-                    grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol);
+                    Dispatcher.Invoke(()=>grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol));
                     //sendData(sender.row,sender.col,row, col);
                     MainGrid.Children.Add(grid);
                 }
