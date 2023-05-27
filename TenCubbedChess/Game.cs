@@ -28,6 +28,16 @@ namespace TenCubbedChess
     //7-Wizard
     //8-Marshall
     //9-Archbishop
+
+    //depth= input
+    //pion = 1 point
+    //cal nebun 3 points
+    //turn 4 to 5 points la inceput 5 si merge spre 4 -> 5 points
+    //regina synergy = +1 + nebun + turn
+    //sinergia intre 2 la fel +0.5, diferite = 1
+    //king 255 (max)
+    //champion - 7
+    //wizard - 8
     class Game
     {
         int[,] _board;
@@ -111,6 +121,12 @@ namespace TenCubbedChess
             
 
         }
+        private int[,] ChangeBoard(int[,] board, Piece piece, Position newPosition)
+        {
+            board[newPosition.row, newPosition.column] = piece.Id;
+            board[piece.position.row, piece.position.column] = 0;
+            return board;
+        }
 
         public void Move(int row, int column, int oldRow=-1, int oldCol=-1)
         {   if (oldCol == -1 && oldRow == -1)
@@ -168,120 +184,12 @@ namespace TenCubbedChess
             return piece;
 
         }
-        private int EvaluateBoard(int[,] board)
-        {
-            int whiteSum = 0;
-            int darkSum = 0;
-            List<Piece> pieces = new List<Piece>(); 
-            for (int i = 0; i < 10; i++)
-                for (int j = 0; j < 10; j++)
-                    if (board[i, j] != 0)
-                        pieces.Add(pieceFactory.createPiece(i, j, board[i, j]));
 
-            foreach(Piece piece in pieces)
-            {
-                if (piece.Id / 10 == 1)
-                    whiteSum += piece.points;
-                else
-                    darkSum += piece.points;
-            }
-            return whiteSum - darkSum;
-        }
-        private List<Piece> GeneratePieces(int[,] board, int player )
-        {
-            List<Piece> pieces = new List<Piece>();
-            for (int i = 0; i < 10; i++)
-                for (int j = 0; j < 10; j++)
-                    if (board[i, j] == player)
-                        pieces.Add(pieceFactory.createPiece(i, j, board[i, j]));
 
-            return pieces;
-        }
-        private List<(Piece,Position)> GetMovesOfPieces(int[,] board, List<Piece> pieces)
-        {
-            List<(Piece, Position)> movesOfPieces = new List<(Piece, Position)>;
-            foreach(Piece piece in pieces)
-            {
-                List<Position> moves = piece.LegalMoves(board);
 
-                foreach(Position move in moves)
-                {
-                    movesOfPieces.Add((piece, move));
-                }
 
-            }
-            return movesOfPieces;
-        }
 
-        private int[,] ChangeBoard(int[,] board, Piece piece, Position newPosition)
-        {
-            board[newPosition.row, newPosition.column] = piece.Id;
-            board[piece.position.row, piece.position.column] = 0;
-            return board;
-        }
-        private int MiniMax(int[,] board, int depth, bool isMaximizingPlayer) { 
-
-            if(depth == 0 )//ADD || GAMEOVER(BOARD)
-            {
-                return EvaluateBoard(board);
-            }
-
-        if(isMaximizingPlayer)
-            {
-                int maxEval = int.MinValue;
-
-                List<Piece> myPieces = GeneratePieces(board, 2);
-                List<(Piece piece, Position position)> pieceMoves = GetMovesOfPieces(board, myPieces);
-                
-                foreach(var pieceMove in pieceMoves)
-                {
-                    int [,] newBoard = ChangeBoard(board, pieceMove.piece, pieceMove.position);
-                    int eval = MiniMax(newBoard, depth - 1, !isMaximizingPlayer);
-                    maxEval = Math.Max(maxEval, eval);
-                }
-                return maxEval;
-
-            }
-        else
-            {
-                int minEval = int.MaxValue;
-                List<Piece> myPieces = GeneratePieces(board, 1);
-                List<(Piece piece, Position position)> pieceMoves = GetMovesOfPieces(board, myPieces);
-
-                foreach (var pieceMove in pieceMoves)
-                {
-                    int[,] newBoard = ChangeBoard(board, pieceMove.piece, pieceMove.position);
-                    int eval = MiniMax(newBoard, depth - 1, !isMaximizingPlayer);
-                    minEval = Math.Min(minEval, eval);
-                }
-                return minEval;
-            }
-        }
-
-        private (Piece,Position) FindBestMove( int depth)
-        {
-            int bestEval = int.MinValue;
-            (Piece piece, Position position) bestMove = (null,null);
-            bool isMaximizingPlayer = true;
-            List<(Piece piece, Position position)> pieceMoves = GetMovesOfPieces(board, _darkPieces);
-            foreach (var pieceMove in pieceMoves)
-            {
-                int[,] newBoard = ChangeBoard(board,pieceMove.piece, pieceMove.position);
-                int eval = MiniMax(newBoard, depth - 1, !isMaximizingPlayer);
-
-                if(eval > bestEval)
-                {
-                    bestEval = eval;
-                    bestMove = pieceMove;
-                }
-
-            }
-            return bestMove;
-        }
-        public void MoveAI()
-        {   int depth = 5;
-            (Piece piece, Position position) bestMove = FindBestMove(depth);
-            Move(bestMove.position.row, bestMove.position.column, bestMove.piece.position.row, bestMove.piece.position.column);
-        }
+       
+        
     }
 }
