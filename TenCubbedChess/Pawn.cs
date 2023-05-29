@@ -35,7 +35,7 @@ namespace TenCubbedChess
         };
 
             int direction = -1;
-            if (Id / 10 == 1)
+            if (Id / 10 == 2)
                 direction = 1;
             foreach (Position offset in offsets) {
                 Position nextMove = new Position(this.position.row + direction * offset.row, this.position.column + direction * offset.column);

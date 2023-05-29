@@ -50,8 +50,8 @@ namespace TenCubbedChess
                 {9, "Archbishop"}
                 };
         private Dictionary<int, string> _colors = new Dictionary<int, string>() {
-                {1, "Dark" },
-                {2, "Light" }
+                {2, "Dark" },
+                {1, "Light" }
             };
 
         public MainWindow(int gameType)
