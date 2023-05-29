@@ -53,6 +53,46 @@ namespace TenCubbedChess
                 {1, "Dark" },
                 {2, "Light" }
             };
+
+        public MainWindow(int gameType)
+        {
+            InitializeComponent();
+            game = new Game();
+            IPAddress localHost = IPAddress.Parse("127.0.0.1");
+            Int32 port = 5000;
+            switch (gameType)
+            {
+                case 0:
+                    {
+                        chessAI = new ChessAI(5);
+                        isAI = true;
+                    }
+                    break;
+                case 1:
+                    {
+                        createServer();
+                        thread = new Thread(Listen);
+                        thread.Start();
+                    }
+                    break;
+                case 2:
+                    {
+                        createClient("127.0.0.1","Created Client");
+                        thread = new Thread(Listen);
+                        thread.Start();
+                    }
+                    break;
+            }
+            DisplayBoard(game.board);
+
+        }
+        public MainWindow()
+        {
+            InitializeComponent();
+            game = new Game();
+            DisplayBoard(game.board);
+
+        }
         private void createServer()
         {
             server = null;
@@ -112,38 +152,6 @@ namespace TenCubbedChess
             //Console.WriteLine("\n Press Enter to continue...");
             //Console.Read();
         }
-        public MainWindow(int gameType)
-        {
-            InitializeComponent();
-            game = new Game();
-            IPAddress localHost = IPAddress.Parse("127.0.0.1");
-            Int32 port = 5000;
-            switch (gameType)
-            {
-                case 0:
-                    {
-                        chessAI = new ChessAI(4);
-                        isAI = true;
-                    }
-                    break;
-                case 1:
-                    {
-                        createServer();
-                        thread = new Thread(Listen);
-                        thread.Start();
-                    }
-                    break;
-                case 2:
-                    {
-                        createClient("127.0.0.1","Created Client");
-                        thread = new Thread(Listen);
-                        thread.Start();
-                    }
-                    break;
-            }
-            DisplayBoard(game.board);
-
-        }
 
         public void Listen()
         {
@@ -171,13 +179,7 @@ namespace TenCubbedChess
 
         }
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            game = new Game();
-            DisplayBoard(game.board);
-
-        }
+     
 
         public void SendData(int oldRow, int oldCol, int newRow, int newCol)
         {
@@ -212,11 +214,13 @@ namespace TenCubbedChess
             //    DisplayMoves(row, col);
             //}
             #endregion
-
+            
             if (UIGrid[row, col].Background == Brushes.Green)
             {
                 game.Move(row, col,oldRow,oldCol);
                 Dispatcher.Invoke(()=>DisplayBoard(game.board));
+                if (game.IsGameOver())
+                    this.Close();
                 if(!isAI)
                 { 
                     SendData(oldRow, oldCol, row, col);
@@ -234,11 +238,13 @@ namespace TenCubbedChess
             else
             {
                 if (game.board[row, col] != 0)
-                {
-                    DisplayBoard(game.board);
-                    DisplayMoves(row, col);
-                    oldRow = row;
-                    oldCol = col;
+                {if (game.ValidPiecePicked(row, col))
+                    {
+                        DisplayBoard(game.board);
+                        DisplayMoves(row, col);
+                        oldRow = row;
+                        oldCol = col;
+                    }
                 }
             }
         }

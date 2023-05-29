@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Data.Common;
 using System.Net.NetworkInformation;
 using System.Numerics;
+using System.Windows.Media.Animation;
 
 namespace TenCubbedChess
 {
@@ -76,7 +77,7 @@ namespace TenCubbedChess
                                        {0 , 21, 22,23,25, 24, 23, 22, 21,0},
                                        {0,  0, 26, 27, 29, 28, 27, 26,0, 0}
             };
-            whiteTurn = false;
+            whiteTurn = true;
             check = false;
             checkMate = false;
             selectedLocation = new Position(-1, -1);
@@ -89,7 +90,25 @@ namespace TenCubbedChess
                         _pieces[board[i, j] / 10].Add(pieceFactory.createPiece(i, j, board[i, j]));
 
         }
+        public Game(int[,] board, int player)
+        {
+            _board = board;
+            whiteTurn = player==1;
+            check = false;
+            checkMate = false;
+            selectedLocation = new Position(-1, -1);
 
+            pieceFactory = new PieceFactory();
+
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
+                    if (board[i, j] != 0)
+                        _pieces[board[i, j] / 10].Add(pieceFactory.createPiece(i, j, board[i, j]));
+        }
+        public void NextTurn()
+        {
+            whiteTurn = !whiteTurn;
+        }
 
         public List<Position> ValidMoves(int row, int column)
         {
@@ -103,7 +122,7 @@ namespace TenCubbedChess
             foreach (Position legalMove in legalMoves)
                 {
                 int[,] newBoard = (int[,])_board.Clone();
-                newBoard = ChangeBoard(newBoard, piece, legalMove);
+                ChangeBoard(newBoard, piece, legalMove);
 
                 if (piece.Id % 10 == 4)
                     king = pieceFactory.createPiece(legalMove.row,legalMove.column,piece.Id);
@@ -121,11 +140,10 @@ namespace TenCubbedChess
             
 
         }
-        private int[,] ChangeBoard(int[,] board, Piece piece, Position newPosition)
+        private void ChangeBoard(int[,] board, Piece piece, Position newPosition)
         {
             board[newPosition.row, newPosition.column] = piece.Id;
             board[piece.position.row, piece.position.column] = 0;
-            return board;
         }
 
         public void Move(int row, int column, int oldRow=-1, int oldCol=-1)
@@ -144,17 +162,24 @@ namespace TenCubbedChess
             piece.Move(row, column);
             var oppositePlayer = (piece.Id / 10) % 2 + 1;
             check = this.IsCheck(oppositePlayer, board,GetPieceById(oppositePlayer*10+4));
-            selectedLocation.SetPosition(-1, -1);
-            whiteTurn = !whiteTurn  ;
-        }
 
+            if(check)
+            {
+                checkMate = IsCheckMate(oppositePlayer, board, GetPieceById(oppositePlayer * 10 + 4));
+            }
+            selectedLocation.SetPosition(-1, -1);
+            NextTurn();
+        }
+        //mutarile inamicului  ataca regele player-ului
         public bool IsCheck(int player, int[,] board, Piece king)
         {
             List<Position> attackedSquares = new List<Position>();
-            foreach (Piece piece in _pieces[player % 2 + 1])
+            var pieces = GeneratePieces(board, player % 2 + 1);
+            foreach (Piece piece in pieces)
             {
                 piece.LegalMoves(board).ForEach(p => attackedSquares.Add(p));
             }
+
             if (attackedSquares.Exists(sq => sq.Equals(king.position)))
                 return true;
 
@@ -175,7 +200,7 @@ namespace TenCubbedChess
 
         private Piece GetPieceById(int Id)
         {
-            Piece? piece = _pieces[Id / 10].Find(p =>
+            Piece? piece = _pieces[Id / 10 ].Find(p =>
             {
                 return p.Id == Id;
             });
@@ -184,12 +209,58 @@ namespace TenCubbedChess
             return piece;
 
         }
+        public bool IsCheckMate(int player,int[,] board,Piece king)
+        {
+            int a;
+            List<Position> attackedSquares = new List<Position>();
+            foreach (Piece piece in _pieces[player])
+            {
+                var moves = piece.LegalMoves(board);
+                foreach(Position move in moves)
+                {
+                    int[,] newBoard = new int[10,10];
+                    Array.Copy(board, newBoard, board.Length);
+
+                    ChangeBoard(newBoard, piece, move);
+
+                    if (!IsCheck(player, newBoard,king))
+                        return false;
+                }
+                
+            }
 
 
+            return true;
+        }
 
+        public bool IsGameOver()
+        {
+            return checkMate && check;
 
+        }
+        public bool IsGameOver(int player,int[,] board)
+        {
+            Piece king = GetPieceById(player * 10 + 4);
+            return IsCheck(player, board, king) && IsCheckMate(player, board, king);
+        }
 
-       
-        
+        private List<Piece> GeneratePieces(int[,] board, int player)
+        {
+            List<Piece> pieces = new List<Piece>();
+            for (int i = 0; i < 10; i++)
+                for (int j = 0; j < 10; j++)
+                    if (board[i, j] / 10 == player)
+                        pieces.Add(pieceFactory.createPiece(i, j, board[i, j]));
+
+            return pieces;
+        }
+
+        public bool ValidPiecePicked(int row,int column)
+        {
+            Position pickedPiece = new Position(row, column);
+
+            return !(GetPieceByLocation(row, column).GetPlayer() == 1 ^ whiteTurn);
+        }
+
     }
 }

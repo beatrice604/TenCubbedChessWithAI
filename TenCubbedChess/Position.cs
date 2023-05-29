@@ -29,6 +29,7 @@ namespace TenCubbedChess
                 return false;
             }
 
+
             Position other = (Position)obj;
             return (row == other.row && column == other.column);
         }

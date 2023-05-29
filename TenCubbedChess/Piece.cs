@@ -50,5 +50,10 @@ namespace TenCubbedChess
                 return true;
             return false;
         }
+
+        public int GetPlayer()
+        {
+            return Id/10;
+        }
     }
 }
