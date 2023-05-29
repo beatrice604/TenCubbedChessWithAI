@@ -153,6 +153,40 @@ namespace TenCubbedChess
             //Console.Read();
         }
 
+        public MainWindow(int gameType, string depth="")
+        {
+            InitializeComponent();
+            game = new Game();
+            IPAddress localHost = IPAddress.Parse("127.0.0.1");
+            Int32 port = 5000;
+            switch (gameType)
+            {
+                case 0:
+                    {
+                        chessAI = new ChessAI(Convert.ToInt32(depth));
+                        isAI = true;
+                    }
+                    break;
+                case 1:
+                    {
+                        createServer();
+                        thread = new Thread(Listen);
+                        thread.Start();
+                    }
+                    break;
+                case 2:
+                    {
+                        createClient("127.0.0.1","Created Client");
+                        thread = new Thread(Listen);
+                        thread.Start();
+                    }
+                    break;
+            }
+            DisplayBoard(game.board);
+
+        }
+
+
         public void Listen()
         {
             Byte[] bytes = new Byte[256];
@@ -300,7 +334,7 @@ namespace TenCubbedChess
                     UIGrid[row, col] = grid;
                     int currentRow = row;
                     int currentCol = col;
-                    Dispatcher.Invoke(()=>grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol));
+                    grid.MouseDown += (sender, e) => Grid_Click(sender, e, currentRow, currentCol);
                     //sendData(sender.row,sender.col,row, col);
                     MainGrid.Children.Add(grid);
                 }
