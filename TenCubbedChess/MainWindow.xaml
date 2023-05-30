@@ -85,7 +85,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!--<TextBlock Text="10 CUBBED CHESS" HorizontalAlignment="Center" Margin="0,0,0,10" FontSize="24"/>-->
-        <Button Style="{DynamicResource btnReset}" x:Name="btnReset"  FontFamily="Times New Roman" Height="100" Width="150" FontSize="14" Grid.Column="1" Grid.Row="0" Margin="-180,-160,0,0">CLICK ME FOR RESET</Button>
+        <Button Style="{DynamicResource btnReset}" x:Name="btnReset"   FontFamily="Times New Roman" Height="100" Width="150" FontSize="14" Grid.Column="1" Grid.Row="0" Margin="-180,-160,0,0" Click="Reset">CLICK ME FOR RESET</Button>
         <Border BorderThickness="10" BorderBrush="Black" Grid.Row="0">
             <Grid x:Name="MainGrid">
                 <Grid.RowDefinitions>
